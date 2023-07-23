@@ -1,5 +1,3 @@
-# create customer table
-# populate table with fake data using faker
 from typing import List, Dict
 
 from faker import Faker
@@ -12,17 +10,17 @@ client = bigquery.Client()
 table_id = "abandoned-cart-393615.data.customers"
 
 
-def create_table():
+def create_customers_table():
     table = bigquery.Table(table_id, schema=schema)
     table = client.create_table(table)  # Make an API request.
     print("Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id))
 
 
-def generate_users(user_num: int) -> List[Dict]:
+def generate_customers(customers_num: int) -> List[Dict]:
     user_list = []
     fake = Faker()
     genders = ["F", "M"]
-    for n in range(user_num):
+    for n in range(customers_num):
         customer_data = {
             "first_name": fake.first_name(),
             "last_name":  fake.last_name(),
@@ -35,13 +33,11 @@ def generate_users(user_num: int) -> List[Dict]:
         user_list.append(customer_data)
     return user_list
 
-def populate_customers_table(users: List[Dict]):
-    errors = client.insert_rows_json(table_id, users)  # Make an API request.
+def populate_customers_table(customers: List[Dict]):
+    errors = client.insert_rows_json(table_id, customers)  # Make an API request.
     if not errors:
         print("New rows have been added.")
     else:
         print("Encountered errors while inserting rows: {}".format(errors))
 
-#create_table()
-users = generate_users(10000)
-populate_customers_table(users)
+

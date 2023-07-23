@@ -14,7 +14,7 @@ def create_dataset():
     print("Created dataset {}.{}".format(client.project, dataset.dataset_id))
 
 
-def create_and_populate_table():
+def create_and_populate_article_table():
     table_id = "abandoned-cart-393615.data.articles"
     job_config = bigquery.LoadJobConfig(
         schema=schema,
@@ -31,5 +31,3 @@ def create_and_populate_table():
     print("Loaded {} rows.".format(destination_table.num_rows))
 
 
-create_dataset()
-create_and_populate_table()
