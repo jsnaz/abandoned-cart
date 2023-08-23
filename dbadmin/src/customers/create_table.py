@@ -16,8 +16,13 @@ def create_customers_table():
     print("Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id))
 
 
-def generate_customers(customers_num: int) -> List[Dict]:
-    user_list = []
+def generate_customers(customers_num):
+    """
+    Generates a list of users using the Faker library
+    :param customers_num: Number of customers that should be created (integer)
+    :return: List of dictionaries
+    """
+    customers_list = []
     fake = Faker()
     genders = ["F", "M"]
     for n in range(customers_num):
@@ -30,14 +35,18 @@ def generate_customers(customers_num: int) -> List[Dict]:
             "country": fake.country(),
             "email": fake.email()
          }
-        user_list.append(customer_data)
-    return user_list
+        customers_list.append(customer_data)
+    return customers_list
 
-def populate_customers_table(customers: List[Dict]):
+def populate_customers_table(customers):
+    """
+    Populate the customers table with the customers data
+    :param customers: list of customers that should be loaded in the customer table (list of dictionaries)
+    """
     errors = client.insert_rows_json(table_id, customers)  # Make an API request.
     if not errors:
         print("New rows have been added.")
     else:
-        print("Encountered errors while inserting rows: {}".format(errors))
+        print(f"Encountered errors while inserting rows: {errors}")
 
 
