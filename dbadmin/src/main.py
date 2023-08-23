@@ -8,5 +8,5 @@ create_dataset()
 create_and_populate_article_table()
 
 create_customers_table()
-users = generate_customers(10000)
-populate_customers_table(users)
+customers = generate_customers(10000)
+populate_customers_table(customers)
