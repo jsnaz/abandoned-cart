@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 .idea/
+recommender/sendgrid_api_key.txt
+
