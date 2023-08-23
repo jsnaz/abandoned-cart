@@ -1,0 +1,91 @@
+body {
+    text-align: center;
+    margin: 4rem 20%;
+}
+
+.heading {
+    margin-top: 2rem;
+}
+
+.cart {
+    padding: 2rem 3rem;
+}
+
+.cart .item {
+    display: inline-block;
+    margin-right: 2rem;
+}
+
+.cart .item img {
+    width: 6rem;
+}
+
+
+.cart .item .info .name {
+    font-weight: bold;
+    display: block;
+}
+
+.reco-title {
+    margin-top: 1rem;
+}
+
+.reco-items {
+    padding: 1rem 2rem;
+}
+
+.reco-items .item {
+    margin-bottom: 2rem;
+    margin-right: 2rem;
+}
+
+.reco-items .item img {
+    width: 10rem;
+}
+
+.reco-items .item .info {
+    display: inline-block;
+    margin-left: 2rem;
+    text-align: left;
+    width: 70%;
+}
+
+
+.reco-items .item .info .name {
+    font-weight: bold;
+}
+
+.reco-items .item .info a {
+    margin-top: 0rem;
+}
+
+.complete-order {
+    background-color: #1d1e1d; /* Green */
+    border: none;
+    color: white;
+    padding: .5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1.2rem;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.check-link {
+    background-color: white;
+    border: none;
+    /* border-radius: 50px; */
+    color: black;
+    /* padding: .5rem 1rem; */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: .9rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.logo {
+    width: 5rem;
+}
