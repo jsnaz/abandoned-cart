@@ -1,37 +1,10 @@
-from google.cloud import bigquery
+from time import sleep
 
-# Create a BigQuery client
-client = bigquery.Client()
+from src.data_fetcher import get_all_articles, get_all_users, retrieve_user_info, get_articles_from_shopping_cart
+from src.email_sender import send_email
 
-
-def get_all_articles():
-    """
-    Gets data from the articles table
-    :return: Dataframe
-    """
-    query = """
-        SELECT *
-        FROM `abandoned-cart-393615.data.articles`
-    """
-    all_articles = client.query(query).to_dataframe()
-    return all_articles
-
-
-def get_articles_from_shopping_cart(article_ids):
-    """
-    Gets data from BigQuery for the given article ids
-    :param article_ids: List of integer
-    :return: DataFrame
-    """
-    str_articles_list = [str(id) for id in article_ids]
-    str_article_ids = ",".join(str_articles_list)
-    query = f"""
-         SELECT *
-         FROM `abandoned-cart-393615.data.articles`
-         WHERE article_id IN ({str_article_ids})
-     """
-    all_articles = client.query(query).to_dataframe()
-    return all_articles
+# 30 mins time interval
+SLEEP_INTERVAL_SECONDS = 1800
 
 
 def get_recommendations(all_articles, cart_articles):
@@ -55,11 +28,65 @@ def get_recommendations(all_articles, cart_articles):
     recommendable_articles = all_articles[~all_articles["article_id"].isin(cart_ids)]
     # Sorting by score and print the 3 best recommendations
     top_3_reco = recommendable_articles.sort_values(by=["score"], ascending=False).head(3)
-    return top_3_reco
+
+    # Return the recommendations as a Python dictionary
+    return top_3_reco.to_dict(orient="records")
 
 
-test_ids = [448831026, 510264001, 566941026]
+def run(user_id, cart_products_ids, all_articles):
+    """
+    Run the recommendation service and send the recommendations to the customer's email
+    :param user_id: user id (string)
+    :param cart_products_ids: ids of the products from the cart (list of integer)
+    :param all_articles: all article data (Pandas DataFrame)
+    :return:
+    """
+
+    user_info = retrieve_user_info(user_id)
+    print(f"The info of the user {user_id} has been retrieved")
+
+    cart_articles = get_articles_from_shopping_cart(cart_products_ids)
+    print("The info of his shopping cart articles has been retrieved")
+
+    recommendations = get_recommendations(all_articles, cart_articles)
+    print("The recommendations has been calculated")
+
+    send_email(user_info, cart_articles.to_dict(orient="records"), recommendations)
+    print("The email has been sent to the customer")
+
+
+def get_random_user(all_users):
+    """
+    Get a random user id from all the users
+    :param all_users: data from the users table (Pandas DataFrame)
+    :return: user id (string)
+    """
+    random_user = all_users.sample()
+    return random_user["id"].values[0]
+
+
+def get_random_articles(all_articles):
+    """
+    Get a list of random product id representing an abandoned cart
+    :param all_articles: data from the articles table (Pandas DataFrame)
+    :return: List of ids (List of integer)
+    """
+    random_articles = all_articles.sample(3)
+    return list(random_articles["article_id"])
+
+
 all_articles = get_all_articles()
-cart_articles = get_articles_from_shopping_cart(test_ids)
-recommendations = get_recommendations(all_articles, cart_articles)
-print(recommendations)
+print("The info of all the articles has been retrieved")
+all_users = get_all_users()
+print("The info of all the users has been retrieved")
+
+while True:
+    random_articles_ids = get_random_articles(all_articles)
+    print(f"Products randomly chosen: {random_articles_ids}")
+
+    random_user_id = get_random_user(all_users)
+    print(f"User randomly chosen: {random_user_id}")
+
+    run(random_user_id, random_articles_ids, all_articles)
+
+    sleep(SLEEP_INTERVAL_SECONDS)
